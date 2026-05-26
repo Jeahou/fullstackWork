@@ -1,0 +1,31 @@
+package com.example.board.vo;
+
+import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class BoardCommentVO {
+	
+	private Long id;
+	private Long boardId;
+	private Long parentId;
+	private Integer lvl;
+	private String content;
+	private Long memberId;
+	private LocalDateTime createdAt;
+	
+	@Builder
+	public BoardCommentVO(Long boardId, Long parentId, String content, Long memberId) {
+		this.boardId = boardId;
+		this.parentId = parentId;
+		this.content = content;
+		this.memberId = memberId;
+	}
+	
+}

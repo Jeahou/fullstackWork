@@ -1,0 +1,74 @@
+package com.example.board.service;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.example.board.dto.member.BoardMemberInfoDTO;
+import com.example.board.dto.member.BoardMemberInsertDTO;
+import com.example.board.dto.member.BoardMemberLoginDTO;
+import com.example.board.dto.token.LoginResponseDTO;
+import com.example.board.mapper.BoardMemberMapper;
+import com.example.board.security.JwtProvider;
+import com.example.board.vo.BoardMemberVO;
+import com.example.board.vo.Role;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class BoardMemberService {
+	private final BoardMemberMapper boardMemberMapper;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	private final JwtProvider jwtProvider;
+	
+	
+	public void insertMember(BoardMemberInsertDTO requestDto) {
+		
+		//이메일 중복체크 로직
+		//닉네임 중복체크 로직
+		
+		String rawPassword = requestDto.getPassword();
+		String encodedPassword = bCryptPasswordEncoder.encode(rawPassword);
+		System.out.println(encodedPassword);
+		
+		boardMemberMapper.insertMember(BoardMemberVO.builder()
+										.email(requestDto.getEmail())
+										.name(requestDto.getName())
+										.nickName(requestDto.getNickName())
+										.password(encodedPassword)
+										.snsType("LOCAL")
+										.role(Role.USER)
+										.build());
+		
+	}
+	
+	public LoginResponseDTO loginMember(BoardMemberLoginDTO requestDto) {
+		
+		BoardMemberVO member = boardMemberMapper.getbyEmailBoardMember(requestDto.getEmail());
+		
+		if(member == null) {
+			throw new IllegalArgumentException("존재하지 않는 이메일입니다.");
+		}
+		
+		if(!bCryptPasswordEncoder.matches(requestDto.getPassword(), member.getPassword())) {
+			throw new IllegalArgumentException("비밀번호가 일치 하지않습니다.");
+		}
+		
+		String accessToken = jwtProvider.creatAccessToken(member.getEmail(), member.getRole().getKey(), member.getId());
+		String refreshToken = jwtProvider.createRefreshToken();
+		
+		return new LoginResponseDTO(accessToken, refreshToken);
+	}
+	
+	public BoardMemberInfoDTO getMemberInfo(String email) {
+		BoardMemberVO vo = boardMemberMapper.getbyEmailBoardMember(email);
+		return BoardMemberInfoDTO.builder()
+				.memberId(vo.getId())
+				.email(vo.getEmail())
+				.name(vo.getName())
+				.nickName(vo.getNickName())
+				.role(vo.getRole().getKey())
+				.build();
+	}
+}

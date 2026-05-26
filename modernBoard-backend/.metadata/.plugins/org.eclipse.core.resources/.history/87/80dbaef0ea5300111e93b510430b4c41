@@ -1,0 +1,38 @@
+package com.example.board.service;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.example.board.dto.member.BoardMemberInsertDTO;
+import com.example.board.mapper.BoardMemberMapper;
+import com.example.board.vo.BoardMemberVO;
+import com.example.board.vo.Role;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class BoardMemberService {
+	private final BoardMemberMapper boardMemberMapper;
+	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	
+	public void insertMember(BoardMemberInsertDTO requestDto) {
+		
+		//이메일 중복체크 로직
+		//닉네임 중복체크 로직
+		
+		String rawPassword = requestDto.getPassword();
+		String encodedPassword = bCryptPasswordEncoder.encode(rawPassword);
+		
+		boardMemberMapper.insertMember(BoardMemberVO.builder()
+										.email(requestDto.getEmail())
+										.name(requestDto.getName())
+										.nickName(requestDto.getNickName())
+										.password(encodedPassword)
+										.snsId(requestDto.getSnsId())
+										.snsType(requestDto.getSnsType())
+										.role(Role.USER)
+										.build());
+	}
+}

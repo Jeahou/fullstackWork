@@ -1,0 +1,88 @@
+package com.example.board.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.board.dto.member.BoardMemberInfoDTO;
+import com.example.board.dto.member.BoardMemberInsertDTO;
+import com.example.board.dto.member.BoardMemberLoginDTO;
+import com.example.board.dto.token.LoginResponseDTO;
+import com.example.board.security.CustomPrincipal;
+import com.example.board.security.JwtProvider;
+import com.example.board.service.BoardMemberService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequestMapping("/api/member")
+@RequiredArgsConstructor
+public class MemberController {
+	
+	private final BoardMemberService boardMemberService;
+	
+	@PostMapping("/register")
+	public ResponseEntity<?> registerMember(@Valid @RequestBody BoardMemberInsertDTO dto, BindingResult bindingResult) {
+		
+		if(bindingResult.hasErrors()) {
+			Map<String, String> errorMap = new HashMap<>();
+			
+			for (FieldError error : bindingResult.getFieldErrors()) {
+                // 예: "password" : "비밀번호는 8~20자리이며..." 형태로 맵에 담습니다.
+                errorMap.put(error.getField(), error.getDefaultMessage());
+            }
+            // 프론트엔드에게 400 상태 코드와 함께 친절한 에러 내용을 JSON으로 던져줍니다.
+            return ResponseEntity.badRequest().body(errorMap);
+		}
+		
+		boardMemberService.insertMember(dto);
+		
+		return ResponseEntity.ok("회원가입이 완료되었습니다.");
+	}
+	
+	@PostMapping("/login")
+	public ResponseEntity<LoginResponseDTO> loginMember(@Valid @RequestBody BoardMemberLoginDTO dto) {
+		
+		LoginResponseDTO responseDto = boardMemberService.loginMember(dto);
+		
+		
+		return ResponseEntity.ok(responseDto);
+	
+	}
+	
+	@GetMapping("/me")
+	public ResponseEntity<BoardMemberInfoDTO> getMemberInfo(
+			@AuthenticationPrincipal CustomPrincipal principal){
+		
+		/*
+		 * //헤더가 비어있거나 "Bearer "로 시작하지 않으면 401에러 if(authHeader == null ||
+		 * !authHeader.startsWith("Bearer ")) { return
+		 * ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); } //앞에 "Bearer "부분 때기
+		 * String token = authHeader.substring(7);
+		 * 
+		 * if(!jwtProvider.validateToken(token)) { return
+		 * ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); }
+		 */
+		
+		//jwtFilter에서 이미 만들어둠 
+		String email = principal.getEmail();
+		
+		BoardMemberInfoDTO myInfo = boardMemberService.getMemberInfo(email);
+		
+		return ResponseEntity.ok(myInfo);
+	}
+	
+}

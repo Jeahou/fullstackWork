@@ -1,0 +1,27 @@
+# 1. OS 간 줄바꿈(엔터) 기본 자동 변환
+* text=auto
+
+# 2. 🌟 Spring Boot Maven 빌드 스크립트 강제 고정 (기존 규칙 통합)
+**/mvnw text eol=lf
+*.cmd text eol=crlf
+
+# 3. 프론트엔드/백엔드 주요 소스 코드는 명시적으로 텍스트로 취급
+*.java text
+*.xml text
+*.properties text
+*.js text
+*.jsx text
+*.ts text
+*.tsx text
+*.css text
+*.html text
+*.json text
+
+# 4. 이미지나 실행 파일은 텍스트 비교(Diff) 대상에서 제외
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.jar binary
+*.class binary

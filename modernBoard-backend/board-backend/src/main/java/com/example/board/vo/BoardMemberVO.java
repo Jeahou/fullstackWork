@@ -1,0 +1,27 @@
+package com.example.board.vo;
+
+import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class BoardMemberVO {
+	private Long id;
+	private String email;
+	private String name;
+	private String nickName;
+	private String password;
+	private String snsId;
+	private String snsType;
+	private Role role;
+	private LocalDateTime regDate;
+	private LocalDateTime modDate;
+	private String refreshToken;
+	private LocalDateTime lastLoginDate;
+}

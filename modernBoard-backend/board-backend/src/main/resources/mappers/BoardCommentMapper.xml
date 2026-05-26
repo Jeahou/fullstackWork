@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.example.board.mapper.BoardCommentMapper">
+  	<select id="getCommentList" resultType = "BoardCommentDTO" parameterType = "long">
+  		SELECT
+  			ID,
+  			BOARD_ID,
+  			PARENT_ID,
+  			CONTENT,
+  			AUTHOR,
+  			CREATED_AT,
+  			LEVEL AS LVL
+  		FROM
+  			(SELECT
+  				c.ID,
+  				c.BOARD_ID,
+  				c.PARENT_ID,
+  				c.CONTENT,
+  				m.NICKNAME AS AUTHOR,
+  				TO_CHAR(c.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
+  				c.DEL_YN
+  			 FROM
+  			 	MODERNBOARD_COMMENT c
+  			 LEFT JOIN
+  			 	MODERNBOARD_MEMBER m
+  			 ON
+  			 	c.MEMBER_ID = m.ID
+  			)	
+  		WHERE
+  			BOARD_ID = #{boardId}
+  			AND DEL_YN = 'N'
+  			
+  		START WITH PARENT_ID IS NULL
+  		
+  		CONNECT BY PRIOR ID = PARENT_ID
+  		<!-- PRIOR는 테이블에 있는 컬럼 이름이 아닙니다. 오라클의 특수 '연산자(명령어)'입니다. (+, -, LIKE 같은 역할이죠.) -->
+  		ORDER SIBLINGS BY ID ASC
+  	</select>
+  	
+  	<insert id="insertComment" parameterType = "BoardCommentVO">
+  		<selectKey keyProperty="id" resultType="long" order="BEFORE">
+  			SELECT SEQ_COMMENT_ID.NEXTVAL FROM DUAL
+  		</selectKey>
+  		INSERT INTO MODERNBOARD_COMMENT (
+  			ID,
+  			BOARD_ID,
+  			PARENT_ID,
+  			CONTENT,
+  			MEMBER_ID,
+  			CREATED_AT
+  		)VALUES(
+  			#{id},
+  			#{boardId},
+  			#{parentId},
+  			#{content},
+  			#{memberId},
+  			SYSDATE
+  		)
+  	</insert>
+  </mapper>

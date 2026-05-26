@@ -1,0 +1,5 @@
+package com.example.board.dto.member;
+
+public class BoardMemberLoginDTO {
+
+}

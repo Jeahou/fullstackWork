@@ -1,0 +1,14 @@
+package com.example.board.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+@Builder
+public class BoardInsertDTO {
+	private String category;
+	private String title;
+	private String content;
+}

@@ -1,0 +1,18 @@
+package com.example.board.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
+
+import com.example.board.vo.BoardFileVO;
+
+@Mapper
+public interface BoardFileMapper {
+	void insertFile(BoardFileVO vo);
+	
+	BoardFileVO getbyIdFilesDownload(Long fileId);
+	
+	List<BoardFileVO> getbyIdFiles(Long boardID);
+	
+	void deleteFile(Long fileId);
+}

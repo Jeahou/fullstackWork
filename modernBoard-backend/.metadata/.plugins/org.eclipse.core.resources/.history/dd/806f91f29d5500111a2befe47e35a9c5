@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.example.board.mapper.BoardMapper">
+    <select id="getBoardList" resultType="BoardVO" parameterType="map">
+	    SELECT 
+	    	ID, 
+	    	CATEGORY, 
+	    	TITLE, 
+	    	CONTENT, 
+	    	MEMBER_ID, 
+	    	CREATED_AT
+	    FROM (
+	        SELECT 
+	        	A.*, 
+	        	ROWNUM AS RN
+	        FROM (
+	            <!-- 1. 가장 안쪽: 정렬 및 조건 검색된 순수 데이터 -->
+	            SELECT 
+	            	ID, 
+	            	CATEGORY, 
+	            	TITLE, 
+	            	CONTENT, 
+	            	MEMBER_ID, 
+	            	CREATED_AT
+	            FROM 
+	            	MODERNBOARD
+	            <where>
+	                DEL_YN = 'N'
+	                <if test="category != null and category != ''">
+	                    AND CATEGORY = #{category}
+	                </if>
+	                <if test="keyword != null and keyword != ''">
+	                    <choose>
+	                        <when test="searchType == 'title'">
+	                            AND TITLE LIKE '%' || #{keyword} || '%'
+	                        </when>
+	                        <when test="searchType == 'content'">
+	                            AND CONTENT LIKE '%' || #{keyword} || '%'
+	                        </when>
+	                        <when test="searchType == 'author'">
+	                            AND MEMBER_ID LIKE '%' || #{keyword} || '%'
+	                        </when>
+	                    </choose>
+	                </if>
+	            </where>
+	            ORDER BY ID DESC
+	        ) A
+	        <!-- 2. 중간: ROWNUM을 붙이고 가져올 최대치(offset + size)까지 자름 -->
+	        WHERE ROWNUM <![CDATA[<=]]> #{offset} + #{size}
+	    )
+	    <!-- 3. 가장 바깥쪽: 시작점(offset) 이후의 데이터만 추출 -->
+	    WHERE RN <![CDATA[>]]> #{offset}
+	</select>
+	
+	<select id="getBoardTotalCount" resultType="int" parameterType="map">
+	    SELECT 
+	    	COUNT(ID)
+	    FROM 
+	    	MODERNBOARD
+	    <where>
+	    	DEL_YN = 'N'
+	    	
+	        <if test="category != null and category != ''">
+	            AND CATEGORY = #{category}
+	        </if>
+	        <if test="keyword != null and keyword != ''">
+	            <choose>
+	                <when test="searchType == 'title'">
+	                    AND TITLE LIKE '%' || #{keyword} || '%'
+	                </when>
+	                <!-- content, author 조건 동일하게 작성 -->
+	            </choose>
+	        </if>
+	    </where>
+	</select>
+	
+    
+    <select id="getByIdBoardVo" resultType="BoardVO" parameterType="long">
+    	SELECT
+    		ID,
+    		CATEGORY,
+    		TITLE,
+    		CONTENT,
+    		MEMBER_ID,
+    		CREATED_AT
+    	FROM MODERNBOARD
+    	WHERE ID = #{id}
+    		AND DEL_YN = 'N'
+    </select>
+    
+    <insert id="insertBoardVo" parameterType="BoardVO">
+    	<selectKey keyProperty="id" resultType="long" order="BEFORE">
+    		SELECT SEQ_MD_ID.NEXTVAL FROM DUAL
+    	</selectKey>
+    	INSERT INTO MODERNBOARD(
+    		ID,
+    		CATEGORY,
+    		TITLE,
+    		CONTENT,
+    		MEMBER_ID,
+    		CREATED_AT
+    	) VALUES (
+    		#{id},
+    		#{category},
+    		#{title},
+    		#{content},
+    		#{memberId},
+    		SYSDATE
+    	)
+    </insert>
+    
+    <update id="updateBoardVo" parameterType="boardVO">
+    	UPDATE 
+    		MODERNBOARD 
+    	SET
+    		CATEGORY = #{category},
+    		TITLE = #{title},
+    		CONTENT = #{content}
+    	WHERE 
+    		ID = #{id}
+    </update>
+    
+    <update id="deleteBoardVo" parameterType="long">
+    	UPDATE
+    		MODERNBOARD
+    	SET
+    		DEL_YN = 'Y'
+    	WHERE 
+    		ID = #{id}
+    </update>
+</mapper>

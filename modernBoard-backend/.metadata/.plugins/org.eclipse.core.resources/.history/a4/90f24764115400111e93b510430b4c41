@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.example.board.mapper.BoardMemberMapper">
+  	<insert id="insertMember" parameterType="BoardMemberVO">
+  		<selectKey keyProperty="id" resultType="long" order="BEFORE">
+  			SELECT SEQ_MEMBER_ID.NEXTVAL FROM DUAL
+  		</selectKey>
+  		INSERT INTO MODERNBOARD_MEMBER(
+  				ID,
+  				EMAIL,
+  				NAME,
+  				NICKNAME,
+  				PASSWORD,
+  				SNS_ID,
+  				SNS_TYPE,
+  				ROLE,
+  				REG_DATE,
+  				MOD_DATE	
+  		)VALUES(
+  				#{id},
+  				#{email},
+  				#{name},
+  				#{nickName},
+  				#{password},
+  				#{snsId, jdbcType=VARCHAR},
+  				#{snsType},
+  				#{role.key, jdbcType=VARCHAR},
+  				SYSDATE,
+  				SYSDATE
+  		)
+  	</insert>
+  	
+  	<select id="getbyEmailBoardMember" parameterType="string" resultType="BoardMemberVO">
+  		SELECT 
+  			ID,
+  			EMAIL,
+  			NAME,
+  			NICKNAME,
+  			PASSWORD,
+  			SNS_ID,
+  			SNS_TYPE,
+  			ROLE,
+  			REG_DATE,
+  			MOD_DATE,
+  			REFRESH_TOKEN,
+  			LAST_LOGIN_DATE
+  		FROM
+  			MODERNBOARD_MEMBER
+  		WHERE
+  			EMAIL = #{email}	
+  	</select>
+  </mapper>
