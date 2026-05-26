@@ -10,18 +10,11 @@ Thumbs.db
 # -------------------------------------------------------------------------
 # 2. 공통 에디터 / IDE 설정 파일 (VS Code, IntelliJ, STS 등)
 # -------------------------------------------------------------------------
-.vscode/*
-!.vscode/extensions.json
-.idea
+.vscode/
+.idea/
 *.iws
 *.iml
 *.ipr
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
 .apt_generated
 .classpath
 .factorypath
@@ -33,19 +26,18 @@ Thumbs.db
 # -------------------------------------------------------------------------
 # 3. Backend (Spring Boot / Maven)
 # -------------------------------------------------------------------------
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
+**/target/
+**/HELP.md
+**/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
 # NetBeans 
 /nbproject/private/
 /nbbuild/
-/dist/
 /nbdist/
 /.nb-gradle/
-build/
+
 !**/src/main/**/build/
 !**/src/test/**/build/
 
@@ -53,9 +45,11 @@ build/
 # 4. Frontend (React / Node.js / Yarn)
 # -------------------------------------------------------------------------
 # 패키지 및 빌드 결과물
-node_modules/
-dist/
-dist-ssr/
+**/node_modules/
+**/build/
+**/dist/
+**/logs/
+**/*.log
 
 # 로그 파일
 logs
@@ -66,16 +60,20 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# STS/Eclipse 내부 메타데이터 폴더 차단 (🌟 필수 추가)
+**/`metadata`/
+
 # -------------------------------------------------------------------------
 # 5. 🚨 보안 및 사용자 업로드 파일 (절대 깃허브에 올라가면 안 되는 것들)
 # -------------------------------------------------------------------------
 # 프론트엔드 환경 변수 (API 주소 등)
-*.local
-frontend/.env
+**/*.local
+**/.env
 
 # 백엔드 DB 비밀번호, JWT 시크릿 키가 담긴 파일 
-backend/src/main/resources/application.properties
-backend/src/main/resources/application-jwt.properties
+**/application.properties
+**/application-jwt.properties
 
+!**/application-template.properties
 # 사용자가 게시판에 업로드한 이미지/첨부파일 폴더
-uploads/
+**/uploads/
