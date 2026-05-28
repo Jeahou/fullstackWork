@@ -70,6 +70,9 @@ lerna-debug.log*
 **/*.local
 **/.env
 
+# STS 빌드 출력 폴더 차단
+**/bin/
+
 # 백엔드 DB 비밀번호, JWT 시크릿 키가 담긴 파일 
 **/application.properties
 **/application-jwt.properties

@@ -18,6 +18,7 @@
 	
 	<properties>
 		<java.version>21</java.version>
+		<oracle.version>19.3.0.0</oracle.version>
 	</properties>
 	
 	<dependencies>
@@ -31,12 +32,6 @@
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>3.0.3</version>
-		</dependency>
-		<!-- Oracle Driver -->
-		<dependency>
-			<groupId>com.oracle.database.jdbc</groupId>
-			<artifactId>ojdbc11</artifactId>
-			<scope>runtime</scope>
 		</dependency>
 		<!-- Lombok -->
 		<dependency>
@@ -57,9 +52,15 @@
 		</dependency>
 		<!--오라클 한글변환 -->
 		<dependency>
+		    <groupId>com.oracle.database.jdbc</groupId>
+		    <artifactId>ojdbc8</artifactId>
+		    <version>${oracle.version}</version>
+		</dependency>
+		
+		<dependency>
 		    <groupId>com.oracle.database.nls</groupId>
 		    <artifactId>orai18n</artifactId>
-		    <version>21.9.0.0</version> <!-- 현재 사용 중인 ojdbc11 버전과 맞추는 것이 좋습니다 -->
+		    <version>${oracle.version}</version>
 		</dependency>
 		<!-- JWT 관련 라이브러리 (최신 0.12.x 버전) -->
 		<dependency>
@@ -90,6 +91,11 @@
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
+		
 	</dependencies>
 
 	<build>

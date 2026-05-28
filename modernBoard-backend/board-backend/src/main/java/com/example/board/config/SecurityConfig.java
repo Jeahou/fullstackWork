@@ -2,7 +2,6 @@ package com.example.board.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -10,8 +9,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.board.security.CustomOAuth2UserService;
 import com.example.board.security.JwtFilter;
 import com.example.board.security.JwtProvider;
+import com.example.board.security.OAuth2SuccessHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,12 +21,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 	
+	private final CustomOAuth2UserService customOAuth2UserService;
+	private final OAuth2SuccessHandler oAuth2SuccessHandler;
+	
 	private final JwtProvider jwtProvider;
 	
-	@Bean
-	public BCryptPasswordEncoder bCryptPasswordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -47,6 +47,11 @@ public class SecurityConfig {
 				    
 				    //그 외의 모든 요청(글쓰기, 댓글달기, 내 정보 조회 등)은 "무조건 토큰이 있어야만" 통과!
 				    .anyRequest().authenticated()
+					)
+			.oauth2Login(oauth2 -> oauth2
+					.userInfoEndpoint(userInfo -> userInfo
+									.userService(customOAuth2UserService)
+									).successHandler(oAuth2SuccessHandler)
 					)
 			
 			.addFilterBefore(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);

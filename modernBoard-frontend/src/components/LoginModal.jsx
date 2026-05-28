@@ -65,6 +65,11 @@ const LoginModal = ({ onClose, setNickname }) => {
     setIsSignUpOpen(false);
   };
 
+  // 구글 로그인창으로 리다이렉트하는 핸들러
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:8000/oauth2/authorization/google';
+  };
+
   return (
     <>
       {/* 회원가입 모달이 열려있지 않을 때만 로그인 모달 표시 */}
@@ -95,7 +100,7 @@ const LoginModal = ({ onClose, setNickname }) => {
             </form>
 
             <div className="social-login-container">
-              <button type="button" className="modal-btn social-btn google-btn">구글 로그인</button>
+              <button type="button" className="modal-btn social-btn google-btn" onClick={handleGoogleLogin}>구글 로그인</button>
               <button type="button" className="modal-btn social-btn naver-btn">네이버 로그인</button>
               <button type="button" className="modal-btn social-btn kakao-btn">카카오 로그인</button>
             </div>

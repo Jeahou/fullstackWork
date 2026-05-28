@@ -5,6 +5,9 @@ import BoardWrite from './pages/BoardWrite';
 import BoardDetail from './pages/BoardDetail';
 import ScrollToTop from './components/ScrollToTop';
 import BoardEdit from './pages/BoardEdit';
+import OAuth2Callback from './pages/OAuth2Callback';
+
+
 
 function App() {
   return (
@@ -24,6 +27,9 @@ function App() {
           
           // ... Routes 내부 어딘가에 추가
           <Route path="/edit/:id" element={<BoardEdit />} />
+
+          // ... (다른 라우트 설정들) ...
+          <Route path="/oauth2/redirect" element={<OAuth2Callback />} />
           
         </Route>
       </Routes>
